@@ -1,3 +1,3 @@
 *.iml
 .idea
-cassandra/cassanttdra_data/*
+cassandra/cassandra_data/*
