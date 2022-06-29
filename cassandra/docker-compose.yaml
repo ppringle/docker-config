@@ -1,12 +1,24 @@
-version: '3.9'
+version: '3'
 
 services:
   cassandra:
-    image: cassandra:4.0
+    image: docker.io/bitnami/cassandra:latest
     ports:
-      - "9042:9042"
+      - '7000:7000'
+      - '9042:9042'
     volumes:
-      - ./config/cassandra_local:/var/lib/cassandra
+      - './cassandra_data:/bitnami'
+      - './init-scripts:/docker-entrypoint-initdb.d'
+      - '../config:/tmp'
+    healthcheck:
+      test: [ "CMD", "/opt/bitnami/cassandra/bin/cqlsh", "-u cassandra", "-p cassandra" ,"-e \"describe keyspaces\"" ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
     environment:
-      - CASSANDRA_CLUSTER_NAME=demo
-      - CASSANDRA_KEYSPACE=invoicedata
+      - CASSANDRA_SEEDS=cassandra
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=cassandra
+volumes:
+  cassandra_data:
+    driver: local
